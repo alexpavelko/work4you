@@ -55,10 +55,11 @@ class Company(models.Model):
     title = models.CharField(max_length=100, verbose_name="Назва компанії")
     website_url = models.CharField(max_length=100, verbose_name="Адреса веб-сайту команії")
     workers_count = models.PositiveIntegerField(default=1, verbose_name="Кількість пацівників")
-    description = models.TextField(max_length=100, verbose_name="Опис команії")
+    description = models.TextField(max_length=1000, verbose_name="Опис команії")
     country = models.ForeignKey(to=Country, on_delete=models.CASCADE, verbose_name="Країна", default="Україна")
     city = models.ForeignKey(to=City, on_delete=models.CASCADE, verbose_name="Місто")
     address = models.CharField(max_length=100, verbose_name="Адреса")
+    image = models.ImageField(verbose_name="Компания", upload_to="photos/%Y/%m/%d/", null=True, blank=True)
 
     class Meta:
         verbose_name = "Компанії"
@@ -73,19 +74,19 @@ class Vacancy(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=100, verbose_name="Назва вакансії")
     description = models.TextField(max_length=1000, verbose_name="Опис вакансії")
-    slry_tps = [("HOURLY", "погодинно"), ("DAILY", "щоденно"), ("WEEKLY", "щотижня"), ("MONTHLY", "щомісячно")]
-    salary_type = models.CharField(max_length=100, verbose_name="Тип оплати", choices=slry_tps)
+    emplt_tps = [("Повна зайнятість", "Повна зайнятість"), ("Неповна зайнятість", "Неповна зайнятість"), ("Дистанційна робота", "Дистанційна робота")]
+    employment_type = models.CharField(max_length=100, verbose_name="Тип зайнятості", choices=emplt_tps, default="Повна зайнятість")
     creation_date = models.DateTimeField(default=datetime.datetime.now(), verbose_name="Дата додавання")
     salary = models.PositiveIntegerField(verbose_name="Зарплата")
-    crcy = [("₴", "HRYVNIA"), ("$", "DOLLAR"), ("€", "EURO")]
+    crcy = [("HRYVNIA", "HRYVNIA"), ("DOLLAR", "DOLLAR"), ("EURO", "EURO")]
     currency = models.CharField(choices=crcy, max_length=10, verbose_name="Валюта")
     is_for_student = models.BooleanField(default=False, verbose_name="Для студентів")
     is_for_migrant = models.BooleanField(default=False, verbose_name="Для переселенців")
-    edu_lvls = [("MIDDLE_SCHOOL", "Середня школа"), ("GRADUATE_SCHOOL", "Старша школа"), ("COLLEGE", "Коледж"),
-                ("BACHELOR", "Бакалавр"), ("MASTER", "Магістр")]
+    edu_lvls = [("середня школа", "середня школа"), ("старша школа", "старша школа"), ("коледж", "коледж"),
+                ("бакалавр", "бакалавр"), ("магістр", "магістр")]
     education_level = models.CharField(max_length=50, choices=edu_lvls, verbose_name="Освіта")
-    exp_lvls = [("NONE", "Без досвіду"), ("HALF_YEAR", "Пів року"), ("ONE_MORE_YEAR", "Більше року"),
-                ("TWO_MORE_YEAR", "Більше 2 років"), ("FIVE_MORE_YEAR", "Більше 5 років")]
+    exp_lvls = [("без досвіду", "без досвіду"), ("пів року", "пів року"), ("більше року", "більше року"),
+                ("більше 2 років", "більше 2 років"), ("більше 5 років", "більше 5 років")]
     experience_level = models.CharField(max_length=50, choices=exp_lvls, verbose_name="Досвід")
     categories = models.ManyToManyField(to=Category, verbose_name="Категорія")
     company = models.ForeignKey(to=Company, on_delete=models.PROTECT, verbose_name="Компанія")
@@ -98,7 +99,4 @@ class Vacancy(models.Model):
     def __str__(self):
         return f'{self.title} у {self.company.city}'
 
-    def get_curr(self):
-        for currency in self.crcy:
-            if currency[0] == self.currency:
-                return currency[1]
+

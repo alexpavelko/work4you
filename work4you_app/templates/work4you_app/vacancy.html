@@ -14,24 +14,36 @@
 
 <div class="container navigation">
     <ul id="nav">
-        <li><a href="/work4you_app/static">Знайти вакансії</a></li>
-        <li><a href="/trains">Розмістити вакансії</a></li>
-        <li><a href="/tickets">Увійти</a></li>
+        <li><a href="/vacancies">Знайти вакансії</a></li>
+        <li><a href="/vacancies">Розмістити вакансії</a></li>
+        <li><a href="/vacancies">Увійти</a></li>
     </ul>
 </div>
 <div class="container vacancy">
     <div style="position: relative; margin:30px">
+        <div style="float: right">
+            {% if vacancy.company.image %}
+                <img class="company_img" src="{{ vacancy.company.image.url }}">
+            {% endif %}
+        </div>
         <div>Вакансія від {{ vacancy.creation_date }}</div>
-        <h2><strong>{{ vacancy }}</strong></h2>
+        <h3><strong>{{ vacancy }}</strong></h3>
 
         <div>
-            <i class="fa-solid fa-hryvnia-sign"></i>
+            {% if vacancy.currency == 'HRYVNIA' %}
+                <i class="fa-solid fa-hryvnia-sign"></i>
+            {% elif vacancy.currency == 'DOLLAR' %}
+                <i class="fa-solid fa-usd"></i>
+            {% elif vacancy.currency == 'EURO' %}
+                <i class="fa-solid fa-eur" aria-hidden="true"></i>
+            {% endif %}
             {{ vacancy.salary }}
         </div>
         <div>
-            <i class="fa-solid fa-city"></i>
+            <i class="fa-solid fa-building"></i>
             <a href="company/{{ vacancy.company.id }}">{{ vacancy.company }}</a>
             <div>
+                <i class="fa-solid fa-briefcase"></i>
                 {% for category in vacancy.categories.all %}
                     {{ category.title }};
                 {% endfor %} {{ vacancy.company.workers_count }} працівників
@@ -44,6 +56,12 @@
         <div>
             <h3><strong>Опис вакансії</strong></h3>
             {{ vacancy.description }}
+            <h3><strong>Вимоги до кандидата:</strong></h3>
+            <ul>
+                <li>Освіта: {{ vacancy.education_level }}</li>
+                <li>Досвід роботи: {{ vacancy.experience_level }}</li>
+            </ul>
+            {{ vacancy.employment_type }}{% if vacancy.is_for_student %}, готові взяти студента{% endif %}{% if vacancy.is_for_migrant %}, готові взяти переселенця{% endif %}.
         </div>
         <div style="display: flex">
             <form action="send/resume/{{ vacancy.company.id }}" style="margin-top: 20px">

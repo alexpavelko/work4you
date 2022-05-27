@@ -3,8 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="../../static/style.css">
 </head>
 <body>
+
+<div class="container navigation">
+    <ul id="nav">
+        <li><a href="/vacancies">Знайти вакансії</a></li>
+        <li><a href="/vacancies">Розмістити вакансії</a></li>
+        <li><a href="/vacancies">Увійти</a></li>
+    </ul>
+</div>
+
+{% for vacancy in vacancies %}
+    <div class="container vacancy">
+        <div style="position: relative; margin:30px">
+            <div style="float: right">
+                {% if vacancy.company.image %}
+                    <img class="company_img" src="{{ vacancy.company.image.url }}">
+                {% endif %}
+            </div>
+            <div>Вакансія від {{ vacancy.creation_date }}</div>
+            <h3><strong><a href="/vacancy/{{ vacancy.id }}">{{ vacancy }}</a></strong></h3>
+            <div>
+                <div>
+                    {% if vacancy.currency == 'HRYVNIA' %}
+                        <i class="fa-solid fa-hryvnia-sign"></i>
+                    {% elif vacancy.currency == 'DOLLAR' %}
+                        <i class="fa-solid fa-usd"></i>
+                    {% elif vacancy.currency == 'EURO' %}
+                        <i class="fa-solid fa-eur" aria-hidden="true"></i>
+                    {% endif %}
+                    {{ vacancy.salary }}
+                </div>
+            </div>
+            <div>
+                <i class="fa-solid fa-city"></i>
+                <a href="company/{{ vacancy.company.id }}">{{ vacancy.company }}</a>
+
+                    {% for category in vacancy.categories.all %}
+                        {{ category.title }}{% if vacancy.categories.all.count != forloop.counter %};{% endif %}
+                    {% endfor %}
+
+            </div>
+            <div>
+                <i class="fa-solid fa-location-dot"></i>
+                {{ vacancy.company.city }}
+            </div>
+            <div style="display: flex">
+                <form action="send/resume/{{ vacancy.company.id }}" style="margin-top: 20px">
+                    <button type="submit" class="btn btn-primary">
+                        Відгукнутися <i class="fa-solid fa-hand"></i>
+                    </button>
+                </form>
+                <form action="save/vacancy/{{ vacancy.company.id }}" style="margin-left: 20px;margin-top: 20px">
+                    <button type="submit" class="btn btn-primary">
+                        Зберегти <i class="fa-solid fa-heart"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endfor %}
 
 </body>
 </html>
