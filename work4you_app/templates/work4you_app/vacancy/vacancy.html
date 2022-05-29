@@ -1,0 +1,146 @@
+{% include "work4you_app/includes/base_header_generic.html" %}
+{% include "work4you_app/includes/base_navigation_generic.html" %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{{ title }}</title>
+</head>
+<body>
+<div class="row">
+    {% if vacancy_details %}
+        <div class="container vacancy">
+            {% if vacancy_details.company.image %}
+                <img class="company_img" src="{{ vacancy_details.company.image.url }}" alt="company">
+            {% endif %}
+            <div>Вакансія від {{ vacancy_details.creation_date }}</div>
+            <h3><strong>{{ vacancy_details }}</strong></h3>
+            <div><i class="{{ vacancy_details.get_currency_sign }}"></i> {{ vacancy_details.salary }}</div>
+            <div>
+                <i class="fa-solid fa-building"></i>
+                <a href="/company/{{ vacancy_details.company.id }}">{{ vacancy_details.company }}</a>
+                <div>
+                    <i class="fa-solid fa-briefcase"></i>
+                    {% for category in vacancy_details.categories.all %}
+                        {{ category.title }};
+                    {% endfor %} {{ vacancy_details.company.workers_count }} працівників
+                </div>
+                <i class="fa-solid fa-location-dot"></i>{{ vacancy_details.company.city }}
+            </div>
+            <div>
+                <h3><strong>Опис вакансії</strong></h3>
+                {{ vacancy_details.description }}
+                <h3><strong>Вимоги до кандидата:</strong></h3>
+                <ul>
+                    <li>Освіта: {{ vacancy_details.education_level }}</li>
+                    <li>Досвід роботи: {{ vacancy_details.experience_level }}</li>
+                </ul>
+                Тип зайнятості: {{ vacancy_details.employment_type }}
+                {% for candidate_type in vacancy_details.candidate_types.all %}
+                    {% if candidate_type == "Переселенець" %} ,готові взяти переселенця {% endif %}
+                    {% if candidate_type == "Студент" %} ,готові взяти студента {% endif %}
+                    {% if candidate_type == "Пенсіонер" %} ,готові взяти пенсіонера {% endif %}
+                    {% if candidate_type == "Без досвіду" %} ,готові взяти людину без досвіду {% endif %}
+                {% endfor %}
+            </div>
+            <div style="display: flex">
+                <form action="send/resume/{{ vacancy_details.company.id }}" style="margin-top: 20px">
+                    <button type="submit" class="btn btn-primary">Відгукнутися <i class="fa-solid fa-hand"></i>
+                    </button>
+                </form>
+                <form action="save/vacancy/{{ vacancy_details.company.id }}"
+                      style="margin-left: 20px;margin-top: 20px">
+                    <button type="submit" class="btn btn-primary">
+                        Зберегти <i class="fa-solid fa-heart"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+    {% if vacancies.count == 0 %}
+        <div class="no_vacancies alert-danger col-md-4">За заданими фільтрами не знайдено жодної вакансії.</div>
+    {% else %}
+        <div class="col-md-8">
+        {% for vacancy in vacancies %}
+            <div style="float: right; width: 70%" class="container vacancy">
+                {% if vacancy.company.image %}
+                    <img class="company_img" src="{{ vacancy.company.image.url }}" alt="company">
+                {% endif %}
+                <div>Вакансія від {{ vacancy.creation_date }}</div>
+                <h3><strong><a href="/vacancy/{{ vacancy.id }}">{{ vacancy }}</a></strong></h3>
+                <div><i class="{{ vacancy.get_currency_sign }}"></i> {{ vacancy.salary }}</div>
+                <div>
+                    <i class="fa-solid fa-city"></i>
+                    <a href="company/{{ vacancy.company.id }}">{{ vacancy.company }}</a>
+                    {% for category in vacancy.categories.all %}
+                        {{ category.title }}{% if vacancy.categories.all.count != forloop.counter %};{% endif %}
+                    {% endfor %}
+                </div>
+                <div><i class="fa-solid fa-location-dot"></i> {{ vacancy.company.city }}</div>
+                <div style="display: flex">
+                    <form action="send/resume/{{ vacancy.company.id }}" class="buttons_form">
+                        <button type="submit" class="btn btn-primary">Відгукнутися <i
+                                class="fa-solid fa-hand"></i>
+                        </button>
+                    </form>
+                    <form action="save/vacancy/{{ vacancy.company.id }}" class="buttons_form">
+                        <button type="submit" class="btn btn-primary">Зберегти <i class="fa-solid fa-heart"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="col-md-2" style="margin-top: 30px;">
+            <h4>Пошук за фільтрами</h4>
+            <form method="get" action="/find/vacancies" name="filters_form">
+                <h4>Категорія</h4>
+                <div>
+                    {% for category in categories %}
+                        <div>
+                            <label for="category_{{ category.title }}">
+                                <input type="checkbox" value="{{ category.title }}"
+                                       id="category_{{ category.title }}"
+                                       name="categories">
+                                {{ category.title }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div>
+                    <h4>Вид зайнятості</h4>
+                    {% for emp_type in employment_types %}
+                        <div>
+                            <label for="type_{{ emp_type }}">
+                                <input type="checkbox" value="{{ emp_type }}" id="type_{{ emp_type }}"
+                                       name="employment_types">
+                                {{ emp_type }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                    <div><h3><strong>Зарплата</strong></h3></div>
+                    <label for="salary">Від</label>
+                    <input type="number" maxlength="6" id="salary" name="salary" value="0">
+                    <select id="user_currency" name="user_currency">
+                        {% for cur in currencies %}
+                            <option>{{ cur }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <div><h3><strong>Підходить, якщо ви</strong></h3></div>
+                    {% for candidate_type in candidate_types %}
+                        <div>
+                            <input type="checkbox" value="{{ candidate_type }}" id="candidate_{{ candidate_type }}"
+                                   name="candidate_types">
+                            <label for="candidate_{{ candidate_type }}">{{ candidate_type }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="btn btn-primary">Знайти</button>
+            </form>
+        </div>
+    {% endif %}
+    </div>
+</div>
+</body>
+</html>

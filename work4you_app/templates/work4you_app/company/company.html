@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="../../static/style.css">
+</head>
+<body>
+
+<div class="container navigation">
+    <ul id="nav">
+        <li><a href="/vacancies">Знайти вакансії</a></li>
+        <li><a href="/vacancies">Розмістити вакансії</a></li>
+        <li><a href="/vacancies">Увійти</a></li>
+    </ul>
+</div>
+<div class="container vacancy">
+    <div style="position: relative; margin:30px">
+        <div style="text-align: center">
+            {% if company.image %}
+                <img class="company_img" src="{{ company.image.url }}">
+                <h3><strong>{{ company }}</strong></h3>
+            {% endif %}
+        </div>
+        <div style="margin-top: 30px">
+            <div style="float:left;">
+                <div><i class="fa-solid fa-city"></i> {{ company.category }}</div>
+                <div><i class="fa fa-users"></i> {{ company.workers_count }} працівників</div>
+            </div>
+            <div style="margin-left: 60%">
+                <div><i class="fa-solid fa-location-dot"></i> {{ company.city }} </div>
+                <div><i class="fa fa-globe"></i> <a href="//{{ company.website_url }}/"
+                                                    target="_blank">{{ company.website_url }}</a></div>
+            </div>
+        </div>
+        <div>
+            <hr>
+            <div id="company_urls"><a href="#description">Про компанію</a><a href="#vacancies">Вакансії</a></div>
+            <hr>
+        </div>
+        <div id="description">{{ company.description }}</div>
+        <div>
+            <hr>
+            <h3>Вакансій: {{ vacancies.all.count }}</h3>
+            <hr>
+        </div>
+        <div id="vacancies">
+            {% for vacancy in vacancies %}
+                <div class="vacancy" style="border: 1px solid white">
+                    <h3><a href="/vacancy/{{ vacancy.id }}">{{ vacancy.title }}</a></h3>
+                    <div>
+                        {% if vacancy.currency == 'HRYVNIA' %}
+                            <i class="fa-solid fa-hryvnia-sign"></i>
+                        {% elif vacancy.currency == 'DOLLAR' %}
+                            <i class="fa-solid fa-usd"></i>
+                        {% elif vacancy.currency == 'EURO' %}
+                            <i class="fa-solid fa-eur" aria-hidden="true"></i>
+                        {% endif %}
+                        {{ vacancy.salary }} {{ vacancy.company.city }}
+                    </div>
+                    <div style="margin-bottom: 10px">
+                        <form action="save/vacancy/{{ vacancy.company.id }}" style="margin-left: 20px;margin-top: 20px">
+                            <button type="submit" style="border: 1px solid white; background-color: lightblue;">
+                                Зберегти <i class="fa-solid fa-heart"></i>
+                            </button>
+                            <span style="float: right; margin-right: 10px">{{ vacancy.creation_date }}</span>
+                        </form>
+                    </div>
+                </div>
+
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
+</body>
+</html>
