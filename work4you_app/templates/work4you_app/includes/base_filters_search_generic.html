@@ -1,0 +1,46 @@
+<h4>Пошук за фільтрами</h4>
+<form method="get" action="/find/vacancies" name="filters_form">
+    <h4>Категорія</h4>
+    <div>
+        {% for category in categories %}
+            <div>
+                <label for="category_{{ category.title }}">
+                    <input type="checkbox" value="{{ category.title }}" id="category_{{ category.title }}"
+                           name="categories">
+                    {{ category.title }}
+                </label>
+            </div>
+        {% endfor %}
+    </div>
+    <div>
+        <h4>Вид зайнятості</h4>
+        {% for emp_type in employment_types %}
+            <div>
+                <label for="type_{{ emp_type }}">
+                    <input type="checkbox" value="{{ emp_type }}" id="type_{{ emp_type }}" name="employment_types">
+                    {{ emp_type }}
+                </label>
+            </div>
+        {% endfor %}
+        <div><h3><strong>Зарплата</strong></h3></div>
+        <label for="salary">Від</label>
+        <input type="number" maxlength="6" id="salary" name="salary" value="0">
+        <select id="user_currency" name="user_currency">
+            {% for cur in currencies %}
+                <option>{{ cur }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <div><h3><strong>Підходить, якщо ви</strong></h3></div>
+        {% for candidate_type in candidate_types %}
+            <div>
+                <input type="checkbox" value="{{ candidate_type }}" id="candidate_{{ candidate_type }}"
+                       name="candidate_types">
+                <label for="candidate_{{ candidate_type }}">{{ candidate_type }}</label>
+            </div>
+        {% endfor %}
+    </div>
+    <button type="submit" class="btn btn-primary">Знайти</button>
+    </div>
+</form>

@@ -10,6 +10,7 @@ urlpatterns = [
     path('', get_vacancies),
     path('vacancy/<int:vacancy_id>', get_vacancy),
     path('vacancies', get_vacancies),
+    path('vacancies/company/<int:company_id>', get_company_vacancies),
     path('find/vacancies', find_vacancies),
     path('company/<int:company_id>', get_company),
 ]

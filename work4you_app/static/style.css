@@ -1,3 +1,21 @@
+* {
+    font-family: "Roboto", "Lucida Grande", "DejaVu Sans", "Bitstream Vera Sans", Verdana, Arial, sans-serif;
+    font-size: 17px;
+}
+
+h4 {
+    font-weight: bold;
+}
+
+label {
+    font-weight: normal;
+}
+
+input[type='number'] {
+    width: 120px;
+    margin-left: 10px;
+}
+
 nav {
     display: flex;
     width: 100%;
@@ -14,6 +32,8 @@ nav {
     display: flex;
     margin-right: 100px;
     list-style-type: none;
+    background: lightblue;
+    width: 100%;
 }
 
 #nav li {
@@ -35,23 +55,46 @@ nav {
     background-color: #fff;
 }
 
-.container {
-    width: 50%;
-    background: lightblue;
-    /*text-align: center;*/
-    font-size: medium;
+.vacancy {
+    width: 60%;
+    border-radius: 20px;
     border: 1px solid gray;
+    background: lightblue;
+    margin-top:30px;
+    padding: 30px 30px 0 30px;
 }
 
-.vacancy {
-    font-family: "Roboto", "Lucida Grande", "DejaVu Sans", "Bitstream Vera Sans", Verdana, Arial, sans-serif;
-    font-size: 17px;
-    margin-top: 30px;
-    border-radius: 20px;
+.no_vacancies {
+    text-align: center;
+    left:50%;
+    top:50%;
+    position: absolute;
+    height: 100px;
 }
+
+.filters {
+    margin-top: 30px;
+}
+
 
 .company_img {
+    margin:30px;
+    float: right;
     width: 150px;
     height: 150px;
     border-radius: 20px;
 }
+
+#company_urls {
+    text-align: center;
+}
+
+#company_urls a {
+    margin-left: 30px;
+}
+
+.buttons_form {
+    margin-right: 20px;
+    margin-top: 20px
+}
+
