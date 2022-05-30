@@ -3,9 +3,6 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <title>{{ title }}</title>
-</head>
 <body>
 <div class="row">
     {% if vacancy_details %}
@@ -25,7 +22,17 @@
                         {{ category.title }};
                     {% endfor %} {{ vacancy_details.company.workers_count }} працівників
                 </div>
-                <i class="fa-solid fa-location-dot"></i>{{ vacancy_details.company.city }}
+                <i class="fa-solid fa-location-dot"></i> {{ vacancy_details.company.city }}
+            </div>
+            <div>
+                <i class="fa fa-check" aria-hidden="true"></i>
+                {{ vacancy_details.employment_type }}
+                {% for candidate_type in vacancy_details.candidate_types.all %}
+                    {% if candidate_type.title == 'Переселенець' %}, готові взяти переселенця{% endif %}
+                    {% if candidate_type.title == 'Студент' %}, готові взяти студента{% endif %}
+                    {% if candidate_type.title == 'Пенсіонер' %}, готові взяти пенсіонера{% endif %}
+                    {% if candidate_type.title == 'Без досвіду' %}, готові взяти людину без досвіду{% endif %}
+                {% endfor %}.
             </div>
             <div>
                 <h3><strong>Опис вакансії</strong></h3>
@@ -35,24 +42,13 @@
                     <li>Освіта: {{ vacancy_details.education_level }}</li>
                     <li>Досвід роботи: {{ vacancy_details.experience_level }}</li>
                 </ul>
-                Тип зайнятості: {{ vacancy_details.employment_type }}
-                {% for candidate_type in vacancy_details.candidate_types.all %}
-                    {% if candidate_type == "Переселенець" %} ,готові взяти переселенця {% endif %}
-                    {% if candidate_type == "Студент" %} ,готові взяти студента {% endif %}
-                    {% if candidate_type == "Пенсіонер" %} ,готові взяти пенсіонера {% endif %}
-                    {% if candidate_type == "Без досвіду" %} ,готові взяти людину без досвіду {% endif %}
-                {% endfor %}
             </div>
             <div style="display: flex">
-                <form action="send/resume/{{ vacancy_details.company.id }}" style="margin-top: 20px">
-                    <button type="submit" class="btn btn-primary">Відгукнутися <i class="fa-solid fa-hand"></i>
-                    </button>
+                <form action="send/resume/{{ vacancy_details.company.id }}" class="buttons_form">
+                    <button type="submit" class="btn btn-primary">Відгукнутися <i class="fa-solid fa-hand"></i></button>
                 </form>
-                <form action="save/vacancy/{{ vacancy_details.company.id }}"
-                      style="margin-left: 20px;margin-top: 20px">
-                    <button type="submit" class="btn btn-primary">
-                        Зберегти <i class="fa-solid fa-heart"></i>
-                    </button>
+                <form action="save/vacancy/{{ vacancy_details.company.id }}" class="buttons_form">
+                    <button type="submit" class="btn btn-primary">Зберегти <i class="fa-solid fa-heart"></i></button>
                 </form>
             </div>
         </div>
