@@ -2,6 +2,7 @@
 *.log
 *.pot
 *.pyc
+__init__.py
 __pycache__
 db.sqlite3
 media
@@ -15,14 +16,14 @@ work4you/settings.py
 
 # File-based project format
 *.iws
-
 # IntelliJ
 out/
 
 # JIRA plugin
 atlassian-ide-plugin.xml
 
-# Distribution / packaging 
+# Distribution / packaging
+work4you_app/static/images
 .Python build/ 
 develop-eggs/ 
 dist/ 

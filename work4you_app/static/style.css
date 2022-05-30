@@ -1,48 +1,106 @@
-ul {
-    display: flex;
-    margin-right: 100px;
-    list-style-type: none;
+* {
+    font-size: 17px;
+}
+
+h4 {
+    font-weight: bold;
+}
+
+label {
+    font-weight: normal;
+}
+
+input[type='number'] {
+    width: 120px;
+    margin-left: 10px;
 }
 
 nav {
-    width: 100%;
-    float: left;
-    margin: 0 0 3em 0;
-    padding: 0;
+    display: flex;
+    background-color: #e3f2fd;
+    padding-top: 20px;
+}
+
+nav ul {
+    margin: 0 auto;
+    display: flex;
+}
+
+nav li {
     list-style: none;
-    background-color: #f2f2f2;
-    border-bottom: 1px solid #ccc;
-    border-top: 1px solid #ccc;
+    margin-right: 70px;
+    padding-bottom: 30px;
 }
 
-#nav li {
-    margin-right: 50px;
-    float: left;
-}
-
-#nav li a {
-    display: block;
-    padding: 8px 15px;
-    text-decoration: none;
-    font-weight: bold;
-    color: #069;
-    border-right: 1px solid #ccc;
-}
-
-#nav li a:hover {
-    color: #c00;
-    background-color: #fff;
-}
-
-.container {
-    width: 50%;
-    background: lightblue;
-    /*text-align: center;*/
-    font-size: medium;
-    border: 1px solid gray;
+nav li a {
+    font-size: 20px;
 }
 
 .vacancy {
-    font-family: "Roboto", "Lucida Grande", "DejaVu Sans", "Bitstream Vera Sans", Verdana, Arial, sans-serif;
-    font-size: 17px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.39);
+    border-radius: 25px;
+    padding: 2%;
+    overflow: auto;
+    text-overflow: ellipsis;
+    margin-bottom: 30px;
 }
+
+.company {
+    width: 60%;
+    margin-top: 30px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.39);
+    border-radius: 25px;
+    padding: 2%;
+    overflow: auto;
+    text-overflow: ellipsis;
+}
+
+.vacancies {
+    margin-top: 30px;
+}
+
+.search_bar {
+    text-align: center;
+    width: 100%;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.filters {
+    padding: 3%;
+    background: white;
+    border-radius: 25px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.36);
+}
+
+
+#selected_city, #query {
+    width: 300px;
+    height: 30px;
+}
+
+hr {
+    border-color: black;
+}
+
+.company_img {
+    margin: 30px;
+    float: right;
+    width: 150px;
+    height: 150px;
+    border-radius: 20px;
+}
+
+#company_urls {
+    text-align: center;
+}
+
+#company_urls a {
+    margin-left: 30px;
+}
+
+.buttons_form {
+    margin-right: 20px;
+    margin-top: 20px;
+}
+

@@ -1,0 +1,57 @@
+{% include "work4you_app/includes/base_header_generic.html" %}
+{% include "work4you_app/includes/base_navigation_generic.html" %}
+
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<div class="container company">
+    {% if company.image %}
+        <img class="company_img" src="{{ company.image.url }}" alt="company">
+        <div style="text-align: center"><h3><strong>{{ company }}</strong></h3></div>
+    {% endif %}
+    <div style="margin-top: 30px">
+        <div style="float:left;">
+            <div><i class="fa-solid fa-city"></i>
+                {% for category in company.categories.all %}
+                    {{ category.title }}{% if company.categories.all.count != forloop.counter %};{% endif %}
+                {% endfor %}
+            </div>
+            <div><i class="fa fa-users"></i> {{ company.workers_count }} працівників</div>
+        </div>
+        <div style="margin-left: 60%">
+            <div><i class="fa-solid fa-location-dot"></i> {{ company.city }} </div>
+            <div><i class="fa fa-globe"></i> <a href="//{{ company.website_url }}/"
+                                                target="_blank">{{ company.website_url }}</a></div>
+        </div>
+    </div>
+    <div>
+        <hr>
+        <div id="company_urls"><a href="#description">Про компанію</a><a href="#vacancies">Вакансії</a></div>
+        <hr>
+    </div>
+    <div id="description">{{ company.description }}</div>
+    <div>
+        <hr>
+        <h3>Вакансій: {{ vacancies.all.count }}</h3>
+        <hr>
+    </div>
+    <div id="vacancies">
+        {% for vacancy in vacancies %}
+            <div class="vacancy">
+                <h3><a href="/vacancy/{{ vacancy.id }}">{{ vacancy.title }}</a></h3>
+                <div>
+                    <i class="{{ vacancy.get_currency_sign }}"></i>{{ vacancy.salary }} {{ vacancy.company.city }}
+                </div>
+                <div style="margin-bottom: 10px">
+                    <a href="/save/vacancy/{{ vacancy.company.id }}">
+                        <button type="button" class="btn btn-primary" style="margin-top: 10px">
+                            Зберегти <i class="fa-solid fa-heart"></i></button>
+                    </a>
+                    <span style="float: right; margin-right: 10px">{{ vacancy.creation_date }}</span>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+</body>
+</html>

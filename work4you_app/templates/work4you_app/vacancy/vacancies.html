@@ -1,0 +1,67 @@
+{% include "work4you_app/includes/base_header_generic.html" %}
+{% include "work4you_app/includes/base_navigation_generic.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<form method="get" action="/find/vacancies">
+    <div style="background-color: #e3f2fd; text-align: center">
+        <input type="text" id="query" name="query" placeholder="Запит" value="{{ selected_query }}">
+        <select id="selected_city" name="city">
+            {% for city in cities %}
+                {% if selected_city.title == city.title %}
+                    <option selected>{{ selected_city }}</option>
+                {% else %}
+                    <option>{{ city }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">Знайти</button>
+        <label for="selected_city"> </label>
+    </div>
+    <div class="row vacancies">
+        <div class="col-md-2"></div>
+        <div class="col-md-5">
+            {% if vacancies.count > 0 %}
+                {% for vacancy in vacancies %}
+                    <div class="vacancy">
+                        {% if vacancy.company.image %}
+                            <img class="company_img" src="{{ vacancy.company.image.url }}" alt="company">
+                        {% endif %}
+                        <div>Вакансія від {{ vacancy.creation_date }}</div>
+                        <h3><strong><a href="/vacancy/{{ vacancy.id }}">{{ vacancy }}</a></strong></h3>
+                        <div><i class="{{ vacancy.get_currency_sign }}"></i> {{ vacancy.salary }}</div>
+                        <div>
+                            <i class="fa-solid fa-city"></i>
+                            <a href="/company/{{ vacancy.company.id }}">{{ vacancy.company }}</a>
+                            {% for category in vacancy.categories.all %}
+                                {{ category.title }}{% if vacancy.categories.all.count != forloop.counter %};{% endif %}
+                            {% endfor %}
+                        </div>
+                        <div><i class="fa-solid fa-location-dot"></i> {{ vacancy.company.city }}</div>
+                        <div style="display: flex">
+                            <a href="/send/resume/{{ vacancy.company.id }}" class="buttons_form">
+                                <button type="button" class="btn btn-primary">Відгукнутися <i
+                                        class="fa-solid fa-hand"></i></button>
+                            </a>
+                            <a href="/save/vacancy/{{ vacancy.company.id }}" class="buttons_form">
+                                <button type="button" class="btn btn-primary">Зберегти <i class="fa-solid fa-heart"></i>
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+                <div>
+                    {% else %}
+                    <div class="col-md-6"></div>
+                    <div class="col-md-6  alert-danger">За заданими фільтрами не знайдено жодної вакансії.</div>
+                </div>
+            {% endif %}
+        <div class="col-md-1"></div>
+        <div class="col-md-3 filters">
+            {% include "work4you_app/includes/base_filters_search_generic.html" %}
+        </div>
+    </div>
+</form>
+</body>
+</html>

@@ -10,23 +10,31 @@ formfield_overrides = {
 
 
 class VacancyAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'company', 'creation_date', 'salary', 'currency',
-                    'is_for_student', 'is_for_migrant',)
+    list_display = ('id', 'title', 'company', 'creation_date', 'salary', 'currency', 'employment_type')
     list_display_links = ('id', 'title', 'company')
-    search_fields = ('is_for_student', 'is_for_migrant')
-    list_editable = ('is_for_student', 'is_for_migrant')
     list_filter = ('salary', 'creation_date')
     formfield_overrides = formfield_overrides
+    filter_horizontal = ('categories', 'candidate_types')
 
 
 class CompanyAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'website_url', 'description', 'workers_count', 'country', 'city', 'address')
     list_display_links = ('title', 'website_url', 'address')
     formfield_overrides = formfield_overrides
+    filter_horizontal = ('categories', )
 
 
-admin.site.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title')
+    list_display_links = ('id', 'title',)
+    formfield_overrides = formfield_overrides
+
+
 admin.site.register(Country)
 admin.site.register(City)
+admin.site.register(Currency)
+admin.site.register(CandidateType)
+admin.site.register(EmploymentType)
+admin.site.register(Category, CategoryAdmin)
 admin.site.register(Vacancy, VacancyAdmin)
 admin.site.register(Company, CompanyAdmin)
