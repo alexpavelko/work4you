@@ -1,22 +1,35 @@
 {% include "work4you_app/includes/base_header_generic.html" %}
 {% include "work4you_app/includes/base_navigation_generic.html" %}
+
 <!DOCTYPE html>
 <html lang="en">
 <body>
-<form method="get" action="/find/vacancies">
-    <div style="background-color: #e3f2fd; text-align: center">
-        <input type="text" id="query" name="query" placeholder="Запит" value="{{ selected_query }}">
-        <select id="selected_city" name="city">
-            {% for city in cities %}
-                {% if selected_city.title == city.title %}
-                    <option selected>{{ selected_city }}</option>
-                {% else %}
-                    <option>{{ city }}</option>
-                {% endif %}
+<form method="get" action="/vacancies/find">
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-5 search_bar">
+            <h3 style="text-align: center"><strong>{{ title }}</strong></h3>
+            <input type="text" id="query" name="query" placeholder="Запит" value="{{ selected_query }}">
+            <select id="selected_city" name="city">
+                {% for city in cities %}
+                    {% if selected_city.title == city.title %}
+                        <option selected>{{ selected_city }}</option>
+                    {% else %}
+                        <option>{{ city }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary">Знайти</button>
+            <label for="selected_city"> </label>
+        </div>
+    </div>
+    <div class="row" style="text-align: center; ">
+        <div class="col-md-2"></div>
+        <div class="col-md-5">
+            {% for top_vacancy in top3 %}
+                <a href="/vacancy/{{ top_vacancy.id }}">{{ top_vacancy.title }}</a>
             {% endfor %}
-        </select>
-        <button type="submit" class="btn btn-primary">Знайти</button>
-        <label for="selected_city"> </label>
+        </div>
     </div>
     <div class="row vacancies">
         <div class="col-md-2"></div>
@@ -34,32 +47,101 @@
                             <i class="fa-solid fa-city"></i>
                             <a href="/company/{{ vacancy.company.id }}">{{ vacancy.company }}</a>
                             {% for category in vacancy.categories.all %}
-                                {{ category.title }}{% if vacancy.categories.all.count != forloop.counter %};{% endif %}
+                                {{ category.title }}{% if vacancy.categories.all.count != forloop.counter %};
+                                {% endif %}
                             {% endfor %}
                         </div>
                         <div><i class="fa-solid fa-location-dot"></i> {{ vacancy.company.city }}</div>
                         <div style="display: flex">
-                            <a href="/send/resume/{{ vacancy.company.id }}" class="buttons_form">
-                                <button type="button" class="btn btn-primary">Відгукнутися <i
-                                        class="fa-solid fa-hand"></i></button>
-                            </a>
-                            <a href="/save/vacancy/{{ vacancy.company.id }}" class="buttons_form">
-                                <button type="button" class="btn btn-primary">Зберегти <i class="fa-solid fa-heart"></i>
-                                </button>
+                            {#                            <a href="/send/resume/{{ vacancy.company.id }}" class="buttons_form">#}
+                            {#                                <button type="button" class="btn btn-primary">Відгукнутися <i#}
+                            {#                                        class="fa-solid fa-hand"></i></button>#}
+                            {#                            </a>#}
+                            {% if user.candidate %}
+                                <a href="/candidate/{{ user.candidate.id }}/vacancy/{{ vacancy.id }}/save"
+                                   class="buttons_form">
+                            {% else %}
+                                <a href="/login" class="buttons_form">
+                            {% endif %}
+                            <button type="button" class="btn btn-primary">
+                                {% if title == 'Збережені вакансії' %}Видалити  <i
+                                    class="fa-solid fa-trash"></i>{% else %} Зберегти <i
+                                        class="fa-solid fa-heart"></i> {% endif %}
+                            </button>
                             </a>
                         </div>
                     </div>
                 {% endfor %}
-                </div>
-                <div>
-                    {% else %}
-                    <div class="col-md-6"></div>
-                    <div class="col-md-6  alert-danger">За заданими фільтрами не знайдено жодної вакансії.</div>
-                </div>
+            {% else %}
+                <div class="col-md-3"></div>
+                <div class="col-md-8  container alert-danger">За заданими фільтрами не знайдено жодної вакансії.</div>
             {% endif %}
+        </div>
         <div class="col-md-1"></div>
-        <div class="col-md-3 filters">
-            {% include "work4you_app/includes/base_filters_search_generic.html" %}
+        <div class="col-md-3 filters" style="height: 600px">
+            <center><h3>Пошук за фільтрами</h3></center>
+            <h4>Категорія</h4>
+            <div>
+                {% for category in categories %}
+                    <div>
+                        <label for="category_{{ category.title }}">
+                            {% if category in selected_categories %}
+                                <input type="checkbox" checked value="{{ category.title }}"
+                                       id="category_{{ category.title }}"
+                                       name="categories">
+                            {% else %}
+                                <input type="checkbox" value="{{ category.title }}" id="category_{{ category.title }}"
+                                       name="categories">
+                            {% endif %}
+                            {{ category.title }}
+                        </label>
+                    </div>
+                {% endfor %}
+            </div>
+            <div>
+                <h4>Вид зайнятості</h4>
+                {% for emp_type in employment_types %}
+                    <div>
+                        <label for="type_{{ emp_type }}">
+                            {% if emp_type in selected_employment_types %}
+                                <input type="checkbox" checked value="{{ emp_type }}" id="type_{{ emp_type }}"
+                                       name="employment_types">
+                            {% else %}
+                                <input type="checkbox" value="{{ emp_type }}" id="type_{{ emp_type }}"
+                                       name="employment_types">
+                            {% endif %}
+                            {{ emp_type }}
+                        </label>
+                    </div>
+                {% endfor %}
+                <div><h4>Зарплата</h4></div>
+                <label for="salary">Від</label>
+                <input type="number" maxlength="6" id="salary" name="salary" value="0">
+                <select id="user_currency" name="user_currency">
+                    {% if selected_currency %}
+                        <option selected>{{ selected_currency }}</option> {% endif %}
+                    {% for cur in currencies %}
+                        <option>{{ cur }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <div><h4>Підходить, якщо ви</h4></div>
+                {% for candidate_type in candidate_types %}
+                    <div>
+                        {% if candidate_type in selected_candidate_types %}
+                            <input type="checkbox" checked value="{{ candidate_type }}"
+                                   id="candidate_{{ candidate_type }}"
+                                   name="candidate_types">
+                        {% else %}
+                            <input type="checkbox"
+                                   value="{{ candidate_type }}" id="candidate_{{ candidate_type }}"
+                                   name="candidate_types">
+                        {% endif %}
+                        <label for="candidate_{{ candidate_type }}">{{ candidate_type }}</label>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
     </div>
 </form>

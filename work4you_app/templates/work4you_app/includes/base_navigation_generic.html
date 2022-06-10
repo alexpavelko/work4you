@@ -1,7 +1,24 @@
-<nav>
-    <ul>
-        <li><a href="/">Знайти вакансії </a></li>
-        <li><a href="#">Розмістити вакансії</a></li>
-        <li><a href="#">Увійти</a></li>
+{% load static %}
+<div class="header">
+    <ul id="mainmenu" class="mainmenu">
+        <li class="logo"><a href="/"><img src="{% static "images/logo.png" %}" class="logo"></a></li>
+        <li><a href="/vacancies">Знайти вакансії </a></li>
+        {% if request.user.is_authenticated %}
+            {% if user.is_candidate %}
+                <li><a href="/candidate/{{ user.candidate.id }}/vacanices/saved">Збережені вакансії </a></li>
+                <li class="last">{{ user.first_name }} {{ user.last_name }}, профіль кандидата
+                    {% else %}
+                <li><a href="/candidates">Знайти кандидатів </a></li>
+                <li><a href="/company/{{ user.employer.company.id }}">Моя компанія </a></li>
+                <li class="last">{{ user.first_name }} {{ user.last_name }}, профіль роботодавця
+            {% endif %}
+        | <a href="{% url 'logout' %}">Вийти</a></li>
+
+        {% else %}
+            <li><a href="/login">Розмістити вакансії</a></li>
+            <li class="last"><a href="/register">Реєстрація</a> | <a href="/login">Увійти</a>
+            </li>
+        {% endif %}
+
     </ul>
-</nav>
+</div>

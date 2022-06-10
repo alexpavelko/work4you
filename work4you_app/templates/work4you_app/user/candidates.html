@@ -1,0 +1,94 @@
+{% include "work4you_app/includes/base_header_generic.html" %}
+{% include "work4you_app/includes/base_navigation_generic.html" %}
+
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-5 search_bar">
+        <h3 style="text-align: center"><strong>{{ title }}</strong></h3>
+        <input type="text" id="query" name="query" placeholder="Запит" value="{{ selected_query }}">
+        <select id="selected_city" name="city">
+            {% for city in cities %}
+                {% if selected_city.title == city.title %}
+                    <option selected>{{ selected_city }}</option>
+                {% else %}
+                    <option>{{ city }}</option>
+                {% endif %}
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">Знайти</button>
+        <label for="selected_city"> </label>
+    </div>
+</div>
+<form method="get" action="/find/vacancies">
+    <div class="row vacancies">
+        <div class="col-md-2"></div>
+        <div class="col-md-5">
+            {% if candidates.count > 0 %}
+                {% for user in candidates %}
+                    {% if user.candidate.desired_vacancy %}
+                        <div class="vacancy">
+                            {% if user.candidate.image %}
+                                <img class="company_img" style="margin: 0" src="{{ user.candidate.image.url }}" alt="company">
+                            {% endif %}
+                            <div>На сайті з {{ user.candidate.creation_date }}</div>
+
+                            <h3>
+                                <strong>
+                                    <a href="/candidate/{{ user.candidate.id }}">
+                                        {{ user.first_name }} {{ user.last_name }}
+                                    </a>
+                                </strong>
+                            </h3>
+                        <h4><strong>{{ user.candidate.desired_vacancy }} </strong></h4>
+                            <i class="fa-solid fa-city"></i>
+                            {{ user.candidate.city }}, {{ user.candidate.city.country }}
+                            <div>Освіта: {{ user.candidate.education_level }}, досвід: {{ user.candidate.experience_level }}</div>
+
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <div class="col-md-3"></div>
+                <div class="col-md-8  container alert-danger">За заданими фільтрами не знайдено жодної вакансії.</div>
+            {% endif %}
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-3 filters" style="height: 450px">
+            <center><h3>Пошук за фільтрами</h3></center>
+            <h4>Освіта</h4>
+            {% for edu_lvl in edu_lvls %}
+                <div>
+                    <label for="edu_lvl_{{ edu_lvl.title }}">
+                        {% if edu_lvl in edu_lvls %}
+                            <input type="checkbox" checked value="{{ edu_lvl }}"
+                                   id="edu_lvls{{ edu_lvl }}" name="edu_lvls">
+                        {% else %}
+                            <input type="checkbox" value="{{ edu_lvl }}" id="edu_lvl_{{ edu_lvl }}" name="edu_lvls">
+                        {% endif %}
+                        {{ edu_lvl }}
+                    </label>
+                </div>
+            {% endfor %}
+                <h4>Досвід</h4>
+                {% for exp_lvl in exp_lvls %}
+                    <div>
+                        <label for="exp_lvl_{{ exp_lvl }}">
+                            {% if exp_lvl in edu_lvls %}
+                                <input type="checkbox" checked value="{{ exp_lvl }}" id="exp_lvl_{{ exp_lvl }}"
+                                       name="exp_lvls">
+                            {% else %}
+                                <input type="checkbox" value="{{ exp_lvl }}" id="exp_lvl_{{ exp_lvl }}"
+                                       name="exp_lvls">
+                            {% endif %}
+                            {{ exp_lvl }}
+                        </label>
+                    </div>
+                {% endfor %}
+        </div>
+    </div>
+</form>
+</body>
+</html>
