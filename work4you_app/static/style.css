@@ -1,10 +1,12 @@
 * {
-    font-size: 17px;
+    font-family: "Google Sans", arial, sans-serif;
 }
 
-h4 {
-    font-weight: bold;
+body {
+        background-color: #eaefe9;
 }
+
+
 
 label {
     font-weight: normal;
@@ -15,26 +17,110 @@ input[type='number'] {
     margin-left: 10px;
 }
 
-nav {
-    display: flex;
-    background-color: #e3f2fd;
-    padding-top: 20px;
+.header {
+    background: #3F4137;
+    height: 60px;
 }
 
-nav ul {
-    margin: 0 auto;
-    display: flex;
+.logo {
+    margin-top: 4px;
 }
 
-nav li {
+ul.mainmenu {
+    text-align: center;
     list-style: none;
-    margin-right: 70px;
-    padding-bottom: 30px;
+    margin: 0;
+    padding: 0;
+    height: 60px;
+    color: #fdc073;
+    font-size: 20px;
+    overflow: hidden;
 }
 
-nav li a {
+ul.mainmenu li {
+    float: left;
+
+    margin: 18px 40px 0 30px;
+}
+
+ul.mainmenu li.logo {
+    margin: 0;
+}
+
+ul.mainmenu li.last {
+    float: right;
+}
+
+ul.mainmenu li a {
+    color: #fdc073;
+    text-decoration: none;
+}
+
+ul.mainmenu li a:hover {
+    color: #FDA83D;
+}
+
+.panelitems {
+    text-align: center;
+}
+
+ul.langitem {
+    list-style: none;
+    display: inline-block;
+    margin: 30px;
+    padding: 0;
+    max-width: 300px
+}
+
+ul.langitem li {
+    margin: 10px 0 0 0;
+    width: 100%;
+}
+
+ul.langitem li.image {
+    margin: 0;
+    text-align: center;
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+}
+
+ul.langitem li.descr {
+    color: #777;
+    height: 170px;
+    overflow: hidden;
+}
+
+ul.langitem li a {
+    color: #fdc073;
+    text-decoration: none;
     font-size: 20px;
 }
+
+ul.langitem li a:hover {
+    color: #FDA83D;
+}
+
+/*nav {*/
+/*    display: flex;*/
+/*    background-color: #e3f2fd;*/
+/*    padding-top: 20px;*/
+/*}*/
+
+/*nav ul {*/
+/*    margin: 0 auto;*/
+/*    display: flex;*/
+/*}*/
+
+/*nav li {*/
+/*    list-style: none;*/
+/*    margin-right: 70px;*/
+/*    padding-bottom: 30px;*/
+/*}*/
+
+/*nav li a {*/
+/*    font-size: 20px;*/
+/*}*/
 
 .vacancy {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.39);
@@ -42,7 +128,7 @@ nav li a {
     padding: 2%;
     overflow: auto;
     text-overflow: ellipsis;
-    margin-bottom: 30px;
+    margin-top: 30px;
 }
 
 .company {
@@ -55,18 +141,13 @@ nav li a {
     text-overflow: ellipsis;
 }
 
-.vacancies {
-    margin-top: 30px;
-}
-
 .search_bar {
-    text-align: center;
-    width: 100%;
-    padding-top: 15px;
-    padding-bottom: 15px;
+    margin-left: 70px;
+    color: black;
 }
 
 .filters {
+    margin-top: 30px;
     padding: 3%;
     background: white;
     border-radius: 25px;
@@ -91,6 +172,14 @@ hr {
     border-radius: 20px;
 }
 
+.company_img-lg {
+    margin: 30px;
+    float: right;
+    width: 250px;
+    height: 250px;
+    border-radius: 20px;
+}
+
 #company_urls {
     text-align: center;
 }
@@ -102,5 +191,108 @@ hr {
 .buttons_form {
     margin-right: 20px;
     margin-top: 20px;
+}
+
+.form-input {
+    width: 300px;
+    font-size: 16px;
+}
+
+.form-label {
+    display: inline-block;
+    min-width: 150px;
+    vertical-align: top;
+}
+
+.form-error ul {
+    list-style: none;
+    padding: 0;
+    color: #CC0000;
+}
+
+.form-button {
+    min-width: 200px;
+    font-size: 16px;
+}
+
+.auth-urls {
+    float: right;
+}
+
+
+.user_card {
+    padding: 20px 40px;
+    color: white;
+    /*background-color: #FDA83D;*/
+    background-color: #3f4136;
+    width: 650px;
+    height: 550px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    justify-content: center;
+
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    -moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 5px;
+}
+
+.login_input * {
+    margin-top: 20px;
+    width: 200px;
+}
+
+.form_container {
+    margin-top: 20px;
+}
+
+#form-title {
+    color: #fff;
+}
+
+.login_btn {
+    width: 100%;
+    background-color: #FDA83D;
+    /*background: #3f4136;*/
+    color: white;
+}
+
+.login_btn:focus {
+    box-shadow: none !important;
+    outline: 0px !important;
+}
+
+.login_container {
+    padding: 0 2rem;
+}
+
+.input-group-text {
+    background: #f7ba5b;
+    color: white ;
+    border: 0 ;
+    margin-top: 10px;
+}
+.input-group-text input {
+    margin-left: 10px;
+    width: 100%;
+}
+
+.input_user,
+.input_pass:focus {
+    box-shadow: none !important;
+    outline: 0px !important;
+}
+
+.input-field {
+    height: 50px;
+    margin: 30px;
+}
+
+.input-text {
+    width: 300px;
 }
 

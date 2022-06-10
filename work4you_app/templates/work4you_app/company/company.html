@@ -5,10 +5,10 @@
 <html lang="en">
 <body>
 <div class="container company">
-    {% if company.image %}
-        <img class="company_img" src="{{ company.image.url }}" alt="company">
-        <div style="text-align: center"><h3><strong>{{ company }}</strong></h3></div>
+    {% if user.employer.company.image %}
+        <img class="company_img" src="{{ user.employer.company.image.url }}" alt="company">
     {% endif %}
+    <div style="text-align: center"><h3><strong>{{ company.title }}</strong></h3></div>
     <div style="margin-top: 30px">
         <div style="float:left;">
             <div><i class="fa-solid fa-city"></i>
@@ -18,7 +18,7 @@
             </div>
             <div><i class="fa fa-users"></i> {{ company.workers_count }} працівників</div>
         </div>
-        <div style="margin-left: 60%">
+        <div style="margin-left: 50%">
             <div><i class="fa-solid fa-location-dot"></i> {{ company.city }} </div>
             <div><i class="fa fa-globe"></i> <a href="//{{ company.website_url }}/"
                                                 target="_blank">{{ company.website_url }}</a></div>
@@ -26,13 +26,64 @@
     </div>
     <div>
         <hr>
-        <div id="company_urls"><a href="#description">Про компанію</a><a href="#vacancies">Вакансії</a></div>
+        <div id="company_urls">
+            <a href="#description">Про компанію</a>
+            <a href="#vacancies">Вакансії</a>
+            <a href="#contacts">Контакти</a>
+        </div>
         <hr>
     </div>
     <div id="description">{{ company.description }}</div>
     <div>
         <hr>
+        <div style="text-align: center" id="contacts">
+            Контакти:
+            {% if company.contacts.email %}
+                <i class="fa fa-envelope"></i>
+                {{ company.contacts.email }}
+            {% endif %}
+            {% if company.contacts.phone1 %}
+                <i class="fa fa-phone"></i>
+                {{ company.contacts.phone1 }}
+            {% endif %}
+            {% if company.contacts.phone2 %}
+                <i class="fa fa-phone"></i>
+                {{ company.contacts.phone2 }}
+            {% endif %}
+            {% if company.contacts.email and company.contacts.phone1 %}
+                <a href="company/contacts/edit/{{ company.contacts.id }}" style="margin-left: 20px">
+                    <button type="submit" class="btn btn-primary">Відредагувати <i
+                            class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                </a>
+            {% endif %}
+        </div>
+    {% if user.is_employer %}
+        <hr>
+        <div style="text-align: center">
+        Доступні дії над компанією:
+        <a href="/company/edit/{{ company.id }}" style="margin-left: 10px">
+            <button type="button" class="btn btn-primary">Відредагувати <i class="fa-solid fa-pen-to-square"></i></button>
+        </a>
+        <a href="/company/delete/{{ company.id }}" style="margin-left: 10px">
+            <button type="button" class="btn btn-danger">Видалити <i class="fa-solid fa-trash-can"></i></button>
+        </a>
+        </div>
+        <hr>
+    {% endif %}
+        {% if company.contacts is None %}
+            <form method="get" action="/company/{{ company.id }}/contacts/add">
+                <div>Котакти не вказані.</div>
+                <button type="submit" class="btn btn-primary">Додати контакти</button>
+            </form>
+        {% endif %}
+        <hr>
         <h3>Вакансій: {{ vacancies.all.count }}</h3>
+        {% if user.is_employer %}
+            <form method="get" action="/company/{{ company.id }}/vacancy/add">
+                <button type="submit" class="btn btn-primary">Додати</button>
+            </form>
+        {% endif %}
         <hr>
     </div>
     <div id="vacancies">
@@ -41,14 +92,9 @@
                 <h3><a href="/vacancy/{{ vacancy.id }}">{{ vacancy.title }}</a></h3>
                 <div>
                     <i class="{{ vacancy.get_currency_sign }}"></i>{{ vacancy.salary }} {{ vacancy.company.city }}
+                    <span style="float: right; margin-right: 10px">Від {{ vacancy.creation_date }}</span>
                 </div>
-                <div style="margin-bottom: 10px">
-                    <a href="/save/vacancy/{{ vacancy.company.id }}">
-                        <button type="button" class="btn btn-primary" style="margin-top: 10px">
-                            Зберегти <i class="fa-solid fa-heart"></i></button>
-                    </a>
-                    <span style="float: right; margin-right: 10px">{{ vacancy.creation_date }}</span>
-                </div>
+
             </div>
         {% endfor %}
     </div>

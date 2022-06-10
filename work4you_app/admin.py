@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.forms import Textarea
-
 from .models import *
 
 formfield_overrides = {
@@ -18,10 +17,10 @@ class VacancyAdmin(admin.ModelAdmin):
 
 
 class CompanyAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'website_url', 'description', 'workers_count', 'country', 'city', 'address')
+    list_display = ('id', 'title', 'website_url', 'description', 'workers_count', 'city', 'address')
     list_display_links = ('title', 'website_url', 'address')
     formfield_overrides = formfield_overrides
-    filter_horizontal = ('categories', )
+    filter_horizontal = ('categories',)
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -30,6 +29,7 @@ class CategoryAdmin(admin.ModelAdmin):
     formfield_overrides = formfield_overrides
 
 
+admin.site.register(User)
 admin.site.register(Country)
 admin.site.register(City)
 admin.site.register(Currency)
@@ -38,3 +38,5 @@ admin.site.register(EmploymentType)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Vacancy, VacancyAdmin)
 admin.site.register(Company, CompanyAdmin)
+admin.site.register(Candidate)
+admin.site.register(Employer)

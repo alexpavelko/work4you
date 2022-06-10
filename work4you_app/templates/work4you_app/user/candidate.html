@@ -1,0 +1,47 @@
+{% include "work4you_app/includes/base_header_generic.html" %}
+{% include "work4you_app/includes/base_navigation_generic.html" %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<body>
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8 vacancy">
+        {% if user.candidate.image %}
+            <img class="company_img-lg" src="{{ user.candidate.image.url }}" alt="user">
+        {% endif %}
+        <div>На сайті з {{ user.candidate.creation_date }}</div>
+        <h3><strong>{{ user.first_name }} {{ user.last_name }}</strong></h3>
+        <i class="fa-solid fa-city"></i>
+        {{ user.candidate.city }}, {{ user.candidate.city.country }}
+        {% if user.candidate.desired_vacancy %}
+            <h4 style="margin-top: 10px"><strong>Бажанана вакансія:</strong> {{ user.candidate.desired_vacancy }}</h4>
+        {% endif %}
+        <div>
+            <h3><strong>Опис кандидата</strong></h3>
+            <ul>
+                <li>Освіта: {{ user.candidate.education_level }}</li>
+                <li>Досвід роботи: {{ user.candidate.experience_level }}</li>
+            </ul>
+
+            <h3><strong>Контакти</strong></h3>
+            <div>
+                <i class="fa fa-envelope"></i>
+                {{ user.email }}
+            </div>
+            <div>{% if user.candidate.phone %}
+                <i class="fa fa-phone"></i>
+                {{ user.candidate.phone }}
+            {% endif %}
+            </div>
+            <div style="margin-top: 30px">
+                <a href="/save/vacancy/{{ user.candidate.id }}" class="buttons_form">
+                    <button type="button" class="btn btn-primary">Зберегти <i class="fa-solid fa-heart"></i></button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
