@@ -95,6 +95,14 @@ class Contacts(models.Model):
     phone2 = models.CharField(max_length=20, verbose_name="Телефон 2", null=True, blank=True)
     email = models.CharField(max_length=30, verbose_name="Email", null=True, blank=False)
 
+    class Meta:
+        verbose_name = "Контакти компанії"
+        verbose_name_plural = "Контакти компанії"
+        ordering = ['id', 'email', 'phone1', 'phone2']
+
+    def __str__(self):
+        return f'{self.email}, тел.1 {self.phone1}, тел.2 {self.phone2}'
+
 
 class Company(models.Model):
     id = models.AutoField(primary_key=True)
@@ -107,9 +115,10 @@ class Company(models.Model):
     description = models.TextField(max_length=1500, verbose_name="Опис команії")
     city = models.ForeignKey(to=City, on_delete=models.CASCADE, verbose_name="Місто")
     address = models.CharField(max_length=100, verbose_name="Адреса")
-    image = models.ImageField(verbose_name="Компания", upload_to="photos/%Y/%m/%d/", null=True, blank=True)
+    image = models.ImageField(verbose_name="Логотип", upload_to="photos/%Y/%m/%d/", null=True, blank=True)
     categories = models.ManyToManyField(to=Category, verbose_name="Категорія", null=True, blank=True)
-    contacts = models.OneToOneField(to=Contacts, on_delete=models.CASCADE, null=True, blank=True, verbose_name="Контакти")
+    contacts = models.OneToOneField(to=Contacts, on_delete=models.CASCADE, null=True, blank=True,
+                                    verbose_name="Контакти")
 
     class Meta:
         verbose_name = "Компанії"
@@ -124,11 +133,11 @@ class Vacancy(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=100, verbose_name="Назва вакансії")
     description = models.TextField(max_length=1500, verbose_name="Опис вакансії")
-    employment_type = models.ForeignKey(to=EmploymentType, on_delete=models.CASCADE, max_length=100,
-                                        verbose_name="Тип зайнятості")
     creation_date = models.DateTimeField(default=datetime.datetime.now(), verbose_name="Дата додавання")
     salary = models.PositiveIntegerField(verbose_name="Зарплата")
-    currency = models.ForeignKey(to=Currency, on_delete=models.CASCADE, max_length=15, verbose_name="Валюта", default="грн")
+    currency = models.ForeignKey(to=Currency, on_delete=models.CASCADE, max_length=15, verbose_name="Валюта",
+                                 default="грн")
+    employment_types = models.ManyToManyField(to=EmploymentType, max_length=100, verbose_name="Тип зайнятості", null=True, blank=True)
     candidate_types = models.ManyToManyField(to=CandidateType, verbose_name="Типи кандидатів", null=True, blank=True)
     edu_lvls = [("середня школа", "середня школа"), ("старша школа", "старша школа"), ("коледж", "коледж"),
                 ("бакалавр", "бакалавр"), ("магістр", "магістр")]
@@ -189,8 +198,7 @@ class Employer(models.Model):
     id = models.AutoField(primary_key=True)
     creation_date = models.DateTimeField(default=datetime.datetime.now(), verbose_name="Дата реєстрації")
     saved_candidates = models.ManyToManyField(to=Candidate, null=True, verbose_name="Збережені кандидати", blank=True)
-    company = models.ForeignKey(to=Company, on_delete=models.CASCADE, null=True, verbose_name="Ваша компанія",
-                                blank=True)
+    company = models.ForeignKey(to=Company, on_delete=models.CASCADE, null=True, verbose_name="Компанія", blank=True)
 
     class Meta:
         verbose_name = "Роботодавці"
@@ -198,19 +206,19 @@ class Employer(models.Model):
         ordering = ['creation_date', 'id']
 
     def __str__(self):
-        return f'{self.id}, {self.company.title}'
+        return f'Company:{self.company}, id = {self.company.id}'
 
 
 class User(AbstractUser):
     is_candidate = models.BooleanField(default=False, verbose_name="Кандидат")
     is_employer = models.BooleanField(default=False, verbose_name="Роботодавець")
     candidate = models.OneToOneField(to=Candidate, on_delete=models.CASCADE, null=True, blank=True)
-    employer = models.OneToOneField(to=Employer, on_delete=models.CASCADE,  null=True, blank=True)
+    employer = models.OneToOneField(to=Employer, on_delete=models.CASCADE, null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Користувачі"
+        verbose_name_plural = "Користувачі"
+        ordering = ['id', 'first_name', 'last_name']
 
     def __str__(self):
-        if self.is_candidate:
-            return f'candidate profile'
-        else:
-            return f'employer profile'
-
-
+        return f'{self.id}. {self.username}, {self.first_name} {self.last_name}'
