@@ -1,24 +1,75 @@
 {% load static %}
-<div class="header">
-    <ul id="mainmenu" class="mainmenu">
-        <li class="logo"><a href="/"><img src="{% static "images/logo.png" %}" class="logo"></a></li>
-        <li><a href="/vacancies">Знайти вакансії </a></li>
-        {% if request.user.is_authenticated %}
-            {% if user.is_candidate %}
-                <li><a href="/candidate/{{ user.candidate.id }}/vacanices/saved">Збережені вакансії </a></li>
-                <li class="last">{{ user.first_name }} {{ user.last_name }}, профіль кандидата
-                    {% else %}
-                <li><a href="/candidates">Знайти кандидатів </a></li>
-                <li><a href="/company/{{ user.employer.company.id }}">Моя компанія </a></li>
-                <li class="last">{{ user.first_name }} {{ user.last_name }}, профіль роботодавця
-            {% endif %}
-        | <a href="{% url 'logout' %}">Вийти</a></li>
-
-        {% else %}
-            <li><a href="/login">Розмістити вакансії</a></li>
-            <li class="last"><a href="/register">Реєстрація</a> | <a href="/login">Увійти</a>
-            </li>
-        {% endif %}
-
-    </ul>
-</div>
+{% include "work4you_app/includes/base_header_generic.html" %}
+<link rel="stylesheet" href="../../../static/style.css">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#"><img src="{% static "images/logo.png" %}" class="logo-brand"></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/vacancies">Знайти вакансії</a>
+                </li>
+                {% if request.user.is_authenticated %}
+                    {% if user.is_candidate %}
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page"
+                               href="/candidate/{{ user.candidate.id }}/vacancies/saved">Збережені вакансії </a>
+                        </li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button"
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="profile-img">
+                                        {% if user.candidate.image %}
+                                            <img src="{{ user.candidate.image.url }}" alt="Фото профілю">
+                                        {% endif %}
+                                        {{ user.first_name }} {{ user.last_name }}, профіль кандидата
+                                    </span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" href="/candidate/{{ user.candidate.id }}">Переглянути
+                                        мій профіль</a></li>
+                                    <li><a class="dropdown-item" href="/candidate/{{ user.candidate.id }}/edit">Редагувати
+                                        мій профіль</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" href="/logout">Вийти</a></li>
+                                </ul>
+                            </li>
+                            {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="/candidates">Знайти кандидатів </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page"
+                                   href="/company/{{ user.employer.company.id }}">Моя компанія </a>
+                            </li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                        <li class="nav-item">
+                            {{ user.first_name }} {{ user.last_name }}, профіль роботодавця | <a
+                                href="/logout">Вийти</a></li>
+                    {% endif %}
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/login">Розмістити вакансії</a>
+                </li>
+                </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                    <li class="nav-item">
+                        <span class="nav-link active" aria-current="page">
+                            <a href="/register">Реєстрація | </a>
+                            <a href="/login">Увійти</a>
+                        </span>
+                    </li>
+                {% endif %}
+                </ul>
+        </div>
+    </div>
+</nav>
