@@ -2,7 +2,7 @@ import json
 import operator
 import statistics
 
-from work4you_app.models import Vacancy, City, Category, Candidate
+from work4you_app.models import Vacancy, City, Category, Candidate, EducationLevel, ExperienceLevel
 
 
 def get_vacancy_count_data():
@@ -55,18 +55,19 @@ def get_salary_data():
 
 
 def get_candidates_edu_data():
-    edu_lvls = list(map(lambda el: str(el[0]), Candidate.edu_lvls))
+    edu_lvls = EducationLevel.objects.all()
     sum = 0
     data = []
-    for lvl in edu_lvls:
-        sum += Candidate.objects.filter(education_level=lvl).count()
-    for lvl in edu_lvls:
-        count = Candidate.objects.filter(education_level=lvl).count()
+    for el in edu_lvls:
+        sum += Candidate.objects.filter(education_level=el).exclude(desired_vacancy=None).count()
+    for el in edu_lvls:
+        Candidate.objects.filter(education_level=el).exclude(desired_vacancy=None).count() / sum * 100
+        count = Candidate.objects.filter(education_level=el).exclude(desired_vacancy=None).count()
         if count > 0:
             data.append({
-                "name": lvl,
-                "y": Candidate.objects.filter(education_level=lvl).count() / sum * 100,
-                "drilldown": lvl
+                "name": el.title,
+                "y": Candidate.objects.filter(education_level=el).exclude(desired_vacancy=None).count() / sum * 100,
+                "drilldown": el.title
             })
     data.sort(key=operator.itemgetter("y"), reverse=True)
     data = json.dumps(data, sort_keys=True, ensure_ascii=False)
@@ -74,18 +75,18 @@ def get_candidates_edu_data():
 
 
 def get_candidates_exp_data():
-    exp_lvls = list(map(lambda el: str(el[0]), Candidate.exp_lvls))
+    exp_lvls = ExperienceLevel.objects.all()
     sum = 0
     data = []
-    for lvl in exp_lvls:
-        sum += Candidate.objects.filter(experience_level=lvl).count()
-    for lvl in exp_lvls:
-        count = Candidate.objects.filter(experience_level=lvl).count()
+    for el in exp_lvls:
+        sum += Candidate.objects.filter(experience_level=el).exclude(desired_vacancy=None).count()
+    for el in exp_lvls:
+        count = Candidate.objects.filter(experience_level=el).exclude(desired_vacancy=None).count()
         if count > 0:
             data.append({
-                "name": lvl,
-                "y": Candidate.objects.filter(experience_level=lvl).count() / sum * 100,
-                "drilldown": lvl
+                "name": el.title,
+                "y": Candidate.objects.filter(experience_level=el).exclude(desired_vacancy=None).count() / sum * 100,
+                "drilldown": el.title
             })
     data.sort(key=operator.itemgetter("y"), reverse=True)
     data = json.dumps(data, sort_keys=True, ensure_ascii=False)

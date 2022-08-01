@@ -22,7 +22,7 @@
         <i class="fa-solid fa-city"></i>
         {{ candidate.city }}, {{ candidate.city.country }}
         {% if candidate.desired_vacancy %}
-            <h4 style="margin-top: 10px"><strong>Бажана вакансія:</strong> {{ candidate.desired_vacancy }}
+            <h4 style="margin-top: 10px"><strong>Бажана вакансія:</strong> {{ candidate.desired_vacancy }}{% if candidate.desired_salary %}, {{ candidate.desired_salary }} грн/міс.{% endif %}
             </h4>
         {% endif %}
         <div>
@@ -32,7 +32,9 @@
                 <li>Досвід роботи: {{ candidate.experience_level }}</li>
             </ul>
 
-
+            {% if candidate.intro %}
+                <h4><strong>Трохи про себе:</strong></h4> {{ candidate.intro }}
+            {% endif %}
 
             <h4><strong>Контакти</strong></h4>
             <div>
