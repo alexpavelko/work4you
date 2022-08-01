@@ -1,5 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.core.exceptions import ValidationError
+
 from .models import *
 
 
@@ -13,7 +15,7 @@ class CandidateForm(forms.ModelForm):
         exclude = ['user', 'creation_date', 'saved_vacancies']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-input'}),
-            'description': forms.Textarea(attrs={'cols': 100, 'rows': 20})
+            'intro': forms.Textarea(attrs={'cols': 100, 'rows': 20})
         }
 
 
@@ -27,13 +29,17 @@ class VacancyForm(forms.ModelForm):
         exclude = ['creation_date', 'company']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-input'}),
-            'description': forms.Textarea(attrs={'cols': 100, 'rows': 20})
+            'description': forms.Textarea(attrs={'cols': 100, 'rows': 20}),
+            'categories': forms.SelectMultiple(attrs={'size': 10}),
+            'candidate_types': forms.SelectMultiple(attrs={'size': 4}),
+            'employment_types': forms.SelectMultiple(attrs={'size': 4}),
         }
 
 
 class CompanyForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self,  *args, **kwargs):
+        self.path = kwargs.pop('path', None)
+        super(CompanyForm, self).__init__(*args, **kwargs)
 
     class Meta:
         model = Company
@@ -41,8 +47,16 @@ class CompanyForm(forms.ModelForm):
         exclude = ['contacts']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-input'}),
-            'description': forms.Textarea(attrs={'cols': 100, 'rows': 20})
+            'description': forms.Textarea(attrs={'cols': 100, 'rows': 20}),
+            'categories': forms.SelectMultiple(attrs={'size': 10}),
         }
+
+    def clean_title(self):
+        title = self.cleaned_data['title']
+        if 'edit' not in self.path and Company.objects.filter(title=title).count() > 0:
+            raise ValidationError("Така компанія вже існує.")
+        else:
+            return title
 
 
 class ContactsForm(forms.ModelForm):
@@ -69,6 +83,13 @@ class RegisterUserForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if User.objects.filter(email=email).count() > 0:
+            raise ValidationError("Користувач з такою електронною поштою вже існує.")
+        else:
+            return email
 
 
 class LoginUserForm(AuthenticationForm):

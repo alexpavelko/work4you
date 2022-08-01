@@ -4,16 +4,16 @@ from .models import *
 
 formfield_overrides = {
     models.CharField: {'widget': Textarea(attrs={'rows': 1, 'cols': 50})},
-    models.TextField: {'widget': Textarea(attrs={'rows': 15, 'cols': 100})},
+    models.TextField: {'widget': Textarea(attrs={'rows': 15, 'cols': 60})},
 }
 
 
 class VacancyAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'company', 'creation_date', 'salary', 'currency', 'employment_type')
+    list_display = ('id', 'title', 'company', 'creation_date', 'salary',)
     list_display_links = ('id', 'title', 'company')
     list_filter = ('salary', 'creation_date')
     formfield_overrides = formfield_overrides
-    filter_horizontal = ('categories', 'candidate_types')
+    filter_horizontal = ('categories', 'candidate_types', 'employment_types',)
 
 
 class CompanyAdmin(admin.ModelAdmin):
@@ -29,14 +29,34 @@ class CategoryAdmin(admin.ModelAdmin):
     formfield_overrides = formfield_overrides
 
 
+class ContactsAdmin(admin.ModelAdmin):
+    list_display = ('id', 'email', 'phone1', 'phone2')
+    list_display_links = ('id', 'email')
+
+
+class EmployerAdmin(admin.ModelAdmin):
+    list_display = ('id', 'creation_date', 'company')
+    list_display_links = ('id', 'company')
+
+
+class CandidateAdmin(admin.ModelAdmin):
+    list_display = ('id', 'creation_date', 'phone', 'education_level', 'experience_level', 'desired_vacancy', 'city')
+    list_display_links = ('id', 'phone')
+    list_filter = ('phone', 'desired_vacancy', 'city')
+    formfield_overrides = formfield_overrides
+
+
 admin.site.register(User)
 admin.site.register(Country)
 admin.site.register(City)
-admin.site.register(Currency)
 admin.site.register(CandidateType)
 admin.site.register(EmploymentType)
+admin.site.register(EducationLevel)
+admin.site.register(ExperienceLevel)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Vacancy, VacancyAdmin)
 admin.site.register(Company, CompanyAdmin)
+admin.site.register(Contacts, ContactsAdmin)
 admin.site.register(Candidate)
-admin.site.register(Employer)
+admin.site.register(Employer, EmployerAdmin)
+
