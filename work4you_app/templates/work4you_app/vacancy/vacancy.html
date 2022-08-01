@@ -5,62 +5,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <body>
-<div class="row">
-    <div class="col-md-2"></div>
-    <div class="col-md-8">
-        {% if vacancy %}
-            <div class="container vacancy">
-                {% if vacancy.company.image %}
-                    <img class="company_img-lg" src="{{ vacancy.company.image.url }}" alt="company">
-                {% endif %}
-                <div>Вакансія від {{ vacancy.creation_date }}</div>
-                <h3><strong>{{ vacancy }}</strong></h3>
-                <div><i class="{{ vacancy.get_currency_sign }}"></i> {{ vacancy.salary }}</div>
-                <div>
-                    <i class="fa-solid fa-building"></i>
-                    <a href="/company/{{ vacancy.company.id }}">{{ vacancy.company }}</a>
-                    <div>
-                        <i class="fa-solid fa-briefcase"></i>
-                        {% for category in vacancy.categories.all %}
-                            {{ category.title }};
-                        {% endfor %} {{ vacancy.company.workers_count }} працівників
-                    </div>
-                    <i class="fa-solid fa-location-dot"></i> {{ vacancy.company.city }}
-                </div>
-                <div>
-                    <i class="fa fa-check" aria-hidden="true"></i>
-                    {% for employment_type in vacancy.employment_types.all %} {{ employment_type }},{% endfor %}
-                    готові взяти
-                    {% for candidate_type in vacancy.candidate_types.all %}{% if forloop.counter != 1 %},{% endif %}{% if candidate_type.title == 'Переселенець' %} переселенця{% endif %}{% if candidate_type.title == 'Студент' %} студента{% endif %}{% if candidate_type.title == 'Пенсіонер' %} пенсіонера{% endif %}{% if candidate_type.title == 'Без досвіду' %} людину без досвіду{% endif %}{% endfor %}.
-                </div>
-                <div>
-                    <h3><strong>Опис вакансії</strong></h3>
-                    {{ vacancy.description }}
-                    <h3><strong>Вимоги до кандидата</strong></h3>
-                    <ul>
-                        <li>Освіта: {{ vacancy.education_level }}</li>
-                        <li>Досвід роботи: {{ vacancy.experience_level }}</li>
-                    </ul>
-                </div>
-                <div id="contacts">
-                    <h3><strong>Контакти</strong></h3>
-                    <div>{% if vacancy.company.contacts.email %}
-                        <i class="fa fa-envelope"></i>
-                        <a href="mailto:{{ vacancy.company.contacts.email }}"> {{ vacancy.company.contacts.email }}</a>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            {% if vacancy %}
+                <div class="container vacancy">
+                    {% if vacancy.company.image %}
+                        <img class="company_img-lg" src="{{ vacancy.company.image.url }}" alt="company">
                     {% endif %}
+                    <div>Вакансія від {{ vacancy.creation_date }}</div>
+                    <h3><strong>{{ vacancy }}</strong></h3>
+                    {% if not vacancy.is_active %}
+                        <div class="col-md-3" style="color: red; font-size: 18px">
+                            Увага: вакансія не активна.
+                        </div>
+                    {% endif %}
+                    <div><i class="fa-solid fa-hryvnia-sign"></i> {{ vacancy.salary }}</div>
+                    <div>
+                        <i class="fa-solid fa-building"></i>
+                        <a href="/company/{{ vacancy.company.id }}">{{ vacancy.company }}</a>
+                        <div>
+                            <i class="fa-solid fa-briefcase"></i>
+                            {% for category in vacancy.categories.all %}
+                                {{ category.title }};
+                            {% endfor %} {{ vacancy.company.workers_count }} працівників
+                        </div>
+                        <i class="fa-solid fa-location-dot"></i> {{ vacancy.company.city }}, {{ vacancy.company.address }}
                     </div>
-                    <div>{% if vacancy.company.contacts.phone1 %}
-                        <i class="fa fa-phone"></i>
-                        {{ vacancy.company.contacts.phone1 }}
-                    {% endif %}</div>
-                    <div>{% if vacancy.company.contacts.phone2 %}
-                        <i class="fa fa-phone"></i>
-                        {{ vacancy.company.contacts.phone2 }}
-                    {% endif %}</div>
-                </div>
+                    <div>
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        {% for employment_type in vacancy.employment_types.all %} {{ employment_type }},{% endfor %}
+                        готові взяти
+                        {% for candidate_type in vacancy.candidate_types.all %}{% if forloop.counter != 1 %},{% endif %}
+                            {% if candidate_type.title == 'Переселенець' %} переселенця{% endif %}
+                            {% if candidate_type.title == 'Студент' %} студента{% endif %}
+                            {% if candidate_type.title == 'Пенсіонер' %} пенсіонера{% endif %}
+                            {% if candidate_type.title == 'Без досвіду' %} людину без досвіду{% endif %}{% endfor %}.
+                    </div>
+                    <div>
+                        <h3><strong>Опис вакансії</strong></h3>
+                        {{ vacancy.description }}
+                        <h3><strong>Вимоги до кандидата</strong></h3>
+                        <ul>
+                            <li>Освіта: {{ vacancy.education_level }}</li>
+                            <li>Досвід роботи: {{ vacancy.experience_level }}</li>
+                        </ul>
+                    </div>
+                    <div id="contacts">
+                        <h3><strong>Контакти</strong></h3>
+                        <div>{% if vacancy.company.contacts.email %}
+                            <i class="fa fa-envelope"></i>
+                            <a href="mailto:{{ vacancy.company.contacts.email }}"> {{ vacancy.company.contacts.email }}</a>
+                        {% endif %}
+                        </div>
+                        <div>{% if vacancy.company.contacts.phone1 %}
+                            <i class="fa fa-phone"></i>
+                            {{ vacancy.company.contacts.phone1 }}
+                        {% endif %}</div>
+                        <div>{% if vacancy.company.contacts.phone2 %}
+                            <i class="fa fa-phone"></i>
+                            {{ vacancy.company.contacts.phone2 }}
+                        {% endif %}</div>
+                    </div>
 
-            </div>
-        {% endif %}
+                </div>
+            {% endif %}
+        </div>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>

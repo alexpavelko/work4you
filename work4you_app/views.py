@@ -10,14 +10,18 @@ from work4you_app.services.vacancy_service import initialize_vacancyForm
 
 
 def get_vacancies(request):
+    vacancies = Vacancy.objects.filter(is_active=True)
+    if vacancies.count() >= 3:
+        top3 = random.sample(list(vacancies), 3)
+    else:
+        top3 = None
     context = {
-        'title': f'{Vacancy.objects.count()} вакансій по Україні',
+        'title': f'{vacancies.count()} вакансій по Україні',
         'salary': 0,
-        'vacancies': Vacancy.objects.all(),
-        'top3': random.sample(list(Vacancy.objects.all()), 3),
+        'vacancies': vacancies,
+        'top3': top3,
         'categories': Category.objects.all(),
         'employment_types': EmploymentType.objects.all(),
-        'currencies': Currency.objects.all(),
         'candidate_types': CandidateType.objects.all(),
         'cities': City.objects.all(),
         'selected_city': 'Вся країна',
@@ -78,11 +82,37 @@ def get_company(request, company_id):
     return render(request, "work4you_app/company/company.html", context)
 
 
-def get_company_vacancies(request, company_id):
+def change_vacancy_activity(request, vacancy_id):
+    vacancy = Vacancy.objects.get(id=vacancy_id)
+    vacancy.is_active = not vacancy.is_active
+    vacancy.save()
+    if vacancy.is_active:
+        sweetify.toast(request, "Вакансія буде відображатися у списку вакансій")
+    else:
+        sweetify.toast(request, "Вакансію приховано")
+    return redirect(f'/company/{vacancy.company.id}#vacancies')
+
+
+def find_candidates(request):
+    candidates = Candidate.objects.filter(desired_salary__gte=request.GET.get('desired_salary'),
+                                          education_level__in=request.GET.getlist('edu_lvls'),
+                                          experience_level__in=request.GET.getlist('exp_lvls'),
+                                          city__in=request.GET.get('city'),
+                                          desired_vacancy__contains=request.GET.get('query')
+                                          ).distinct()
     context = {
-        'vacancies': Vacancy.objects.filter(company=Company.objects.get(id=company_id))
+        'title': f'Знайдено {candidates.count()} кандидатів',
+        'desired_salary': request.GET.get('desired_salary'),
+        'edu_lvls': EducationLevel.objects.all(),
+        'exp_lvls': ExperienceLevel.objects.all(),
+        'candidates': candidates,
+        'cities': City.objects.all(),
+        'selected_query': request.GET.get('query'),
+        'selected_city': request.GET.get('city'),
+        'selected_exp_lvls': request.GET.get('exp_lvls'),
+        'selected_edu_lvls': request.GET.get('edu_lvls'),
     }
-    return render(request, "work4you_app/company/company.html", context)
+    return render(request, 'work4you_app/user/candidates.html', context)
 
 
 def get_candidate(request, candidate_id):
@@ -101,11 +131,11 @@ def get_saved_vacancies(request, candidate_id):
     candidate = Candidate.objects.get(id=candidate_id)
     context = {
         'title': 'Збережені вакансії',
+        'salary': 0,
         'vacancies': candidate.saved_vacancies.all(),
         'top3': sorted(Vacancy.objects.all()[:3], key=lambda x: random.random()),
         'categories': Category.objects.all(),
         'employment_types': EmploymentType.objects.all(),
-        'currencies': Currency.objects.all(),
         'candidate_types': CandidateType.objects.all(),
         'cities': City.objects.all(),
         'candidate': candidate
@@ -162,6 +192,8 @@ def edit_candidate(request, candidate_id):
         'experience_level': candidate.experience_level,
         'image': candidate.image,
         'desired_vacancy': candidate.desired_vacancy,
+        'desired_salary': candidate.desired_salary,
+        'intro': candidate.intro,
         'city': candidate.city,
     })
     if request.method == 'POST':
@@ -169,12 +201,11 @@ def edit_candidate(request, candidate_id):
         if candidate_form.is_valid():
             Candidate.objects.filter(id=candidate_id).update(
                 phone=candidate_form.cleaned_data['phone'],
-                education_level=candidate_form.cleaned_data[
-                    'education_level'],
-                experience_level=candidate_form.cleaned_data[
-                    'experience_level'],
-                desired_vacancy=candidate_form.cleaned_data[
-                    'desired_vacancy'],
+                education_level=candidate_form.cleaned_data['education_level'],
+                experience_level=candidate_form.cleaned_data['experience_level'],
+                desired_vacancy=candidate_form.cleaned_data['desired_vacancy'],
+                desired_salary=candidate_form.cleaned_data['desired_salary'],
+                intro=candidate_form.cleaned_data['intro'],
                 city=candidate_form.cleaned_data['city'],
             )
             if request.FILES.get('image') is not None:
@@ -192,7 +223,7 @@ def edit_candidate(request, candidate_id):
 def add_company(request):
     company_form = CompanyForm()
     if request.method == 'POST':
-        company_form = CompanyForm(request.POST)
+        company_form = CompanyForm(request.POST, path=request.path)
         if company_form.is_valid():
             company = company_form.save()
             company.save()
@@ -205,7 +236,6 @@ def add_company(request):
             user.save()
             sweetify.success(request, f'Ви успішно зареєстрували компанію {company.title}')
             return redirect(f'/company/{company.id}')
-
     context = {
         'title': 'Додати компанію',
         'confirm_button': 'Додати',
@@ -243,19 +273,19 @@ def edit_company(request, company_id):
         'description': company.description,
         'website_url': company.website_url,
         'workers_count': company.workers_count,
-    })
+    }, path=request.path)
     if request.method == 'POST':
-        company_form = CompanyForm(request.POST)
+        company_form = CompanyForm(request.POST, path=request.path)
         if company_form.is_valid():
             company.title = company_form.cleaned_data['title']
             company.workers_count = company_form.cleaned_data['workers_count']
             company.website_url = company_form.cleaned_data['website_url']
             company.description = company_form.cleaned_data['description']
             company.address = company_form.cleaned_data['address']
-            company.categories.set = company_form.cleaned_data.get('categories')
             company.city = company_form.cleaned_data['city']
             if request.FILES.get('image') is not None:
                 company.image = request.FILES.get('image')
+            company.categories.set(company_form.cleaned_data.get('categories'))
             company.save()
             sweetify.success(request, 'Ви успішно оновили інформацію про компанію ' + company.title)
             return redirect(f'/company/{company.id}')
@@ -296,10 +326,13 @@ def add_or_edit_contacts(request, company_id):
 
 
 def get_candidates(request):
+    candidates = Candidate.objects.all().exclude(desired_vacancy=None)
     context = {
-        'candidates': User.objects.all(),
-        'exp_lvls': map(lambda lvl: str(lvl[0]).capitalize(), Candidate.exp_lvls),
-        'edu_lvls': map(lambda lvl: str(lvl[0]).capitalize(), Candidate.edu_lvls),
+        'title': f'{candidates.count()} кандидатів по Україні',
+        'candidates': candidates,
+        'edu_lvls': EducationLevel.objects.all(),
+        'exp_lvls': ExperienceLevel.objects.all(),
+        'desired_salary': 0,
         'cities': City.objects.all(),
         'edu_data': chart_service.get_candidates_edu_data(),
         'exp_data': chart_service.get_candidates_exp_data()

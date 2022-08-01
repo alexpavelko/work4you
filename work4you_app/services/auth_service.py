@@ -14,9 +14,7 @@ def register_user(request):
             user = form.save()
             username = form.cleaned_data.get('username')
             candidate = Candidate.objects.create(user=user)
-            candidate.save()
             employer = Employer.objects.create(user=user)
-            employer.save()
             user.candidate = candidate
             user.employer = employer
             user.save()

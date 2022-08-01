@@ -9,116 +9,130 @@
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script src="../../../static/js/chart_painter.js"></script>
-<div class="row">
-    <div class="col-md-2"></div>
-    <div class="col-md-5 search_bar">
-        <h3 style="text-align: center"><strong>{{ title }}</strong></h3>
-        <input type="text" id="query" name="query" placeholder="Запит" value="{{ selected_query }}">
-        <select id="selected_city" name="city">
-            {% for city in cities %}
-                {% if selected_city.title == city.title %}
-                    <option selected>{{ selected_city }}</option>
-                {% else %}
-                    <option>{{ city }}</option>
-                {% endif %}
-            {% endfor %}
-        </select>
-        <button type="submit" class="btn btn-primary">Знайти</button>
-        <label for="selected_city"> </label>
-    </div>
-</div>
-<form method="get" action="/find/vacancies">
-    <div class="row vacancies">
-        <div class="col-md-2"></div>
-        <div class="col-md-5">
-            {% if candidates.count > 0 %}
-                {% for user in candidates %}
-                    {% if user.candidate.desired_vacancy %}
-                        <div class="vacancy">
-                            {% if user.candidate.image %}
-                                <img class="company_img" style="margin: 0" src="{{ user.candidate.image.url }}"
-                                     alt="company">
+
+<div class="container-fluid">
+    <form method="get" action="/candidates/find">
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-5 search_bar">
+                <h3 style="text-align: center"><strong>{{ title }}</strong></h3>
+                <input type="text" id="query" name="query" placeholder="Запит" value="{{ selected_query }}">
+                <select id="selected_city" name="city">
+                    {% for city in cities %}
+                        {% if selected_city.title == city.title %}
+                            <option selected>{{ selected_city }}</option>
+                        {% else %}
+                            <option>{{ city }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-primary">Знайти</button>
+                <label for="selected_city"> </label>
+            </div>
+            <div class="row vacancies">
+                <div class="col-md-2"></div>
+                <div class="col-md-5">
+                    {% if candidates.count > 0 %}
+                        {% for candidate in candidates %}
+                            {% if candidate.desired_vacancy %}
+                                <div class="vacancy">
+                                    {% if candidate.image %}
+                                        <img class="company_img" style="margin: 0" src="{{ candidate.image.url }}"
+                                             alt="company">
+                                    {% endif %}
+                                    <div>На сайті з {{ candidate.creation_date }}</div>
+
+                                    <h3>
+                                        <strong>
+                                            <a href="/candidate/{{ candidate.id }}">
+                                                {{ candidate.desired_vacancy }}
+                                            </a>
+                                        </strong>
+                                    </h3>
+                                    <h5><i class="fa-solid fa-hryvnia-sign"></i>{{ candidate.desired_salary }}</h5>
+                                    <i class="fa-solid fa-city"></i>
+                                    {{ candidate.city }}, {{ candidate.city.country }}
+                                    <div>Освіта: {{ candidate.education_level }},
+                                        досвід: {{ candidate.experience_level }}</div>
+
+                                </div>
                             {% endif %}
-                            <div>На сайті з {{ user.candidate.creation_date }}</div>
-
-                            <h3>
-                                <strong>
-                                    <a href="/candidate/{{ user.candidate.id }}">
-                                        {{ user.first_name }} {{ user.last_name }}
-                                    </a>
-                                </strong>
-                            </h3>
-                            <h4><strong>{{ user.candidate.desired_vacancy }} </strong></h4>
-                            <i class="fa-solid fa-city"></i>
-                            {{ user.candidate.city }}, {{ user.candidate.city.country }}
-                            <div>Освіта: {{ user.candidate.education_level }},
-                                досвід: {{ user.candidate.experience_level }}</div>
-
-                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="col-md-3"></div>
+                        <div class="col-md-8  container alert-danger"
+                         style="font-size: 18px; margin-top:20px; text-align: center">
+                        Не знайдено жодного кандидата.
+                    </div>
                     {% endif %}
-                {% endfor %}
-            {% else %}
-                <div class="col-md-3"></div>
-                <div class="col-md-8  container alert-danger">За заданими фільтрами не знайдено жодної вакансії.</div>
-            {% endif %}
-        </div>
-        <div class="col-md-1"></div>
-        <div class="col-md-3">
-            <div class="filters" style="height: 450px">
-                <div style="text-align: center;"><h3>Пошук за фільтрами</h3></div>
-                <h4>Освіта</h4>
-                {% for edu_lvl in edu_lvls %}
-                    <div>
-                        <label for="edu_lvl_{{ edu_lvl.title }}">
-                            {% if edu_lvl in edu_lvls %}
-                                <input type="checkbox" checked value="{{ edu_lvl }}"
-                                       id="edu_lvls{{ edu_lvl }}" name="edu_lvls">
-                            {% else %}
-                                <input type="checkbox" value="{{ edu_lvl }}" id="edu_lvl_{{ edu_lvl }}" name="edu_lvls">
-                            {% endif %}
-                            {{ edu_lvl }}
-                        </label>
-                    </div>
-                {% endfor %}
-                <h4>Досвід</h4>
-                {% for exp_lvl in exp_lvls %}
-                    <div>
-                        <label for="exp_lvl_{{ exp_lvl }}">
-                            {% if exp_lvl in edu_lvls %}
-                                <input type="checkbox" checked value="{{ exp_lvl }}" id="exp_lvl_{{ exp_lvl }}"
-                                       name="exp_lvls">
-                            {% else %}
-                                <input type="checkbox" value="{{ exp_lvl }}" id="exp_lvl_{{ exp_lvl }}"
-                                       name="exp_lvls">
-                            {% endif %}
-                            {{ exp_lvl }}
-                        </label>
-                    </div>
-                {% endfor %}
-                <div style="padding-top:100px;">
-                    <figure class="highcharts-figure filters" style="height: 450px">
-                        <div id="candidates_edu"></div>
-                        <div style="text-align: center">
-                            <a href="/charts/candidates" style="text-align: center">Детальніше</a>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-3">
+                    <div class="filters" style="height: 450px">
+                        <div style="text-align: center;"><h3>Пошук за фільтрами</h3></div>
+                        <h4>Освіта</h4>
+                        {% for edu_lvl in edu_lvls %}
+                            <div>
+                                <label for="edu_lvl_{{ edu_lvl }}">
+                                    {% if edu_lvl in selected_edu_lvls %}
+                                        <input type="checkbox" checked value="{{ edu_lvl }}" id="edu_lvls{{ edu_lvl }}"
+                                               name="edu_lvls">
+                                    {% else %}
+                                        <input type="checkbox" value="{{ edu_lvl }}" id="edu_lvl_{{ edu_lvl }}"
+                                               name="edu_lvls">
+                                    {% endif %}
+                                    {{ edu_lvl }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                        <h4>Досвід</h4>
+                        {% for exp_lvl in exp_lvls %}
+                            <div>
+                                <label for="exp_lvl_{{ exp_lvl }}">
+                                    {% if exp_lvl in selected_exp_lvls %}
+                                        <input type="checkbox" checked value="{{ exp_lvl }}" id="exp_lvl_{{ exp_lvl }}"
+                                               name="exp_lvls">
+                                    {% else %}
+                                        <input type="checkbox" value="{{ exp_lvl }}" id="exp_lvl_{{ exp_lvl }}"
+                                               name="exp_lvls">
+                                    {% endif %}
+                                    {{ exp_lvl }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                        <label for="desired_salary">Від</label>
+                        <input type="number" maxlength="6" id="desired_salary" name="desired_salary"
+                               value="{{ desired_salary }}" step="1" min="0" max="500000"> грн.
+                        {% if '/candidates' == request.path %}
+                            <div style="padding-top:100px;">
+                            <figure class="highcharts-figure filters" style="height: 450px">
+                                <div id="candidates_edu"></div>
+                                <div style="text-align: center">
+                                    <a href="/charts/candidates" style="text-align: center">Детальніше</a>
+                                </div>
+                            </figure>
+                            <figure class="highcharts-figure filters" style="height: 450px">
+                                <div id="candidates_exp"></div>
+                                <div style="text-align: center">
+                                    <a href="/charts/candidates" style="text-align: center">Детальніше</a>
+                                </div>
+                            </figure>
+                        {% endif %}
+                        <script>
+                            edu_data = {{ edu_data|safe }}
+                                exp_data = {{ exp_data|safe }}
+                                    show_column_chart(edu_data, 'candidates_edu', 'По освіті', 'Відосток', '{point.y:.1f}', '%')
+                            show_column_chart(exp_data, 'candidates_exp', 'По досвіду', 'Відосток', '{point.y:.1f}', '%')
+                        </script>
                         </div>
-                    </figure>
-                    <figure class="highcharts-figure filters" style="height: 450px">
-                        <div id="candidates_exp"></div>
-                        <div style="text-align: center">
-                            <a href="/charts" style="text-align: center">Детальніше</a>
-                        </div>
-                    </figure>
-                    <script>
-                        edu_data = {{ edu_data|safe }}
-                        exp_data = {{ exp_data|safe }}
-                        show_column_chart(edu_data, 'candidates_edu', 'По освіті', 'Відосток', '{point.y:.1f}', '%')
-                        show_column_chart(exp_data, 'candidates_exp', 'По досвіду', 'Відосток', '{point.y:.1f}', '%')
-                    </script>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</form>
+
+    </form>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

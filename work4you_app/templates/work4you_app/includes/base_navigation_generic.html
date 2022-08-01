@@ -14,7 +14,15 @@
                     <a class="nav-link active" aria-current="page" href="/vacancies">Знайти вакансії</a>
                 </li>
                 {% if request.user.is_authenticated %}
-                    {% if user.is_candidate %}
+                    {% if user.is_staff %}
+                        </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="nav-item">
+                            {{ user.first_name }} {{ user.last_name }}, профіль адміністратора | <a
+                                href="/logout">Вийти</a>
+                        </li>
+                    </ul>
+                    {% elif user.is_candidate %}
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page"
                                href="/candidate/{{ user.candidate.id }}/vacancies/saved">Збережені вакансії </a>
